@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S T 4 R // ENTITY ARCHIVE</title>
+    <style>
+        /* --- GLOBAL ESTHETICS --- */
+        :root {
+            var(--bg-color): #000000; 
+            var(--text-color): #ffffff; 
+            var(--red-alert): #8a0303;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+            overflow-y: auto; 
+            user-select: none;
+            font-family: 'Courier New', Courier, monospace; 
+        }
+
+        /* --- MANDELA CATALOGUE BACKGROUND --- */
+        #mandela-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url('https://picsum.photos/id/325/1920/1080?grayscale');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2; 
+            z-index: 1;
+            animation: screen-flicker 15s infinite;
+        }
+
+        /* --- ATMOSPHERIC LAYERS (FIXED TO SCREEN) --- */
+        #noise, #scanlines, #vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+        }
+
+        #noise {
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==');
+            background-repeat: repeat;
+            opacity: 0.3;
+            z-index: 100;
+            animation: noise-move 0.08s steps(4) infinite;
+        }
+
+        #scanlines {
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.4) 0px,
+                rgba(0, 0, 0, 0.4) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 101;
+        }
+
+        #vignette {
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.95) 100%);
+            z-index: 90;
+        }
+
+        /* --- CONTENT CONTAINER --- */
+        .archive-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10vh 20px 20vh 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* --- TEXT STYLING ("ST4R") --- */
+        .glitch-header {
+            font-size: 6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.1em;
+            text-align: center;
+            transform: scaleX(1.3);
+            text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.8), 
+                        -0.025em -0.05em 0 rgba(0, 255, 0, 0.8), 
+                        0.025em 0.05em 0 rgba(0, 0, 255, 0.8);
+            animation: glitch 600ms infinite, screen-flicker 10s infinite;
+            margin-bottom: 0;
+        }
+
+        .transmission {
+            font-size: 1.2rem;
+            color: #8c8c94;
+            letter-spacing: 0.2em;
+            margin-bottom: 2rem;
+            animation: screen-flicker 10s infinite;
+            text-align: center;
+        }
+
+        /* --- CONTACT & LINKS SECTION --- */
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 4rem;
+            z-index: 102; 
+            pointer-events: auto; 
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .alert-link {
+            color: #ff3333;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 1px solid #ff3333;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+            text-align: center;
+            background: rgba(0,0,0,0.6);
+            letter-spacing: 2px;
+        }
+        
+        .alert-link:hover {
+            background-color: #ff3333;
+            color: #000;
+            text-shadow: none;
+            box-shadow: 0 0 15px #ff3333;
+        }
+
+        .discord-tag {
+            color: #ffffff;
+            font-size: 1.2rem;
+            border: 1px dashed #555;
+            padding: 10px 15px;
+            text-align: center;
+            background: rgba(0,0,0,0.6);
+            letter-spacing: 1px;
+        }
+
+        .discord-tag span {
+            color: #ff3333;
+            font-weight: bold;
+            animation: text-flicker 3s infinite;
+        }
+
+
+        /* --- ENTITY FILES --- */
+        .entity-card {
+            width: 100%;
+            border: 1px solid #333;
+            background: rgba(5, 5, 5, 0.85); 
+            margin-bottom: 3rem;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .entity-title {
+            font-size: 1.5rem;
+            color: #ffffff;
+            border-bottom: 1px dashed #555;
+            padding-bottom: 10px;
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .entity-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border: 1px solid #444;
+            margin-bottom: 15px;
+            filter: grayscale(100%) contrast(150%) brightness(80%); 
+            opacity: 0.8;
+            animation: screen-flicker 15s infinite; 
+        }
+
+        .entity-description {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #cccccc;
+            text-shadow: 1px 0px 1px rgba(0,0,0,1);
+        }
+
+        .redacted {
+            background-color: #ffffff;
+            color: #ffffff; 
+            padding: 0 4px;
+        }
+
+        .alert-text {
+            color: #ff3333;
+            font-weight: bold;
+            animation: text-flicker 1.5s infinite;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes noise-move {
+            0%, 100% { background-position: 0 0; }
+            25% { background-position: -5px 5px; }
+            50% { background-position: 10px -5px; }
+            75% { background-position: 2px 8px; }
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 rgba(255,0,0,0.8), -0.025em -0.05em 0 rgba(0,255,0,0.8), 0.025em 0.05em 0 rgba(0,0,255,0.8); }
+            14% { text-shadow: -0.05em -0.025em 0 rgba(255,0,0,0.8), 0.025em 0.025em 0 rgba(0,255,0,0.8), -0.05em -0.05em 0 rgba(0,0,255,0.8); }
+            15% { color: #ffffff; transform: translateX(10px) skewX(20deg) scaleX(1.3); opacity: 0.6; text-shadow: 10px 0 0 #f0f, -10px 0 0 #0ff; }
+            16% { color: #ffffff; transform: translateX(0px) skewX(0deg) scaleX(1.3); opacity: 0.9; text-shadow: 0.05em 0 0 rgba(255,0,0,0.8), -0.025em -0.05em 0 rgba(0,255,0,0.8), 0.025em 0.05em 0 rgba(0,0,255,0.8); }
+            49% { transform: translateX(2px) scaleX(1.3); }
+            50% { transform: translateX(0) scaleX(1.3); }
+            90% { transform: translateX(-1px) scaleX(1.3); opacity: 0.9; }
+            91% { opacity: 0.8; }
+            92% { opacity: 0.9; }
+            100% { transform: translateX(0) scaleX(1.3); }
+        }
+
+        @keyframes screen-flicker {
+            0% { opacity: 0.95; filter: contrast(1.1) brightness(1.1); }
+            30% { opacity: 0.9; filter: contrast(1.0) brightness(1.0); }
+            31% { opacity: 0.6; filter: brightness(1.5); }
+            32% { opacity: 0.9; filter: brightness(1.1); }
+            80% { opacity: 0.95; }
+            81% { opacity: 0.8; filter: contrast(0.9) brightness(0.8); }
+            83% { opacity: 0.95; filter: contrast(1.1) brightness(1.1); }
+            100% { opacity: 0.95; }
+        }
+
+        @keyframes text-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Mandela Background Image -->
+    <div id="mandela-bg"></div>
+
+    <!-- Atmospheric Layers -->
+    <div id="noise"></div>
+    <div id="scanlines"></div>
+    <div id="vignette"></div>
+
+    <!-- Scrollable Content -->
+    <div class="archive-container">
+        
+        <h1 class="glitch-header">ST4R</h1>
+        <p class="transmission">DEPARTMENT OF TEMPORAL PHENOMENA</p>
+
+        <!-- LINKS & CONTACT -->
+        <div class="contact-links">
+            <a href="https://github.com/UnidentifiedST4R" class="alert-link" target="_blank">ACCESS GITHUB REPOSITORY</a>
+            <a href="https://unidentifiedarc.itch.io/" class="alert-link" target="_blank">ACCESS ITCH.IO ARCHIVE</a>
+            <a href="https://www.reddit.com/user/UnidentifiedST4R/" class="alert-link" target="_blank">u/UnidentifiedST4R ON REDDIT</a>
+            <div class="discord-tag">ADD MY DISCORD // <span>miku0ncrack</span></div>
+        </div>
+
+        <!-- Container for auto-generated entities -->
+        <div id="entities-container">
+            <!-- JavaScript will insert the 100+ entities here -->
+        </div>
+
+        <p class="transmission" style="margin-top: 2rem;">M.A.D. PROTOCOL ENGAGED // DO NOT OPEN YOUR EYES</p>
+
+    </div>
+
+    <!-- JAVASCRIPT TO GENERATE HUNDREDS OF ENTITIES -->
+    <script>
+        // Array of possible origins
+        const origins = [
+            "MANDELA COUNTY RECORDS",
+            "MANDELA POLICE DEPARTMENT",
+            "VITA CARNIS ECOSYSTEM",
+            "INCIDENT DEPT. T-HENDERSON",
+            "GEMINI HOME ENTERTAINMENT",
+            "LOCAL58 BROADCAST HIJACK",
+            "MONUMENT MYTHOS ZONE",
+            "BACKROOMS LEVEL UNKNOWN"
+        ];
+
+        // Array of possible threat levels
+        const threats = ["NEUTRAL", "ELEVATED", "<span class='alert-text'>EXTREME</span>", "CATASTROPHIC", "PSYCHOLOGICAL", "UNKNOWN (DO NOT ENGAGE)"];
+
+        // Array of scary buzzwords to generate descriptions
+        const descFragments = [
+            "Entity demonstrates severe spatial distortion.",
+            "Subject possesses knowledge it should not have.",
+            "It mimics voices of <span class='redacted'>deceased family members</span>.",
+            "DO NOT respond to its requests for entry.",
+            "Do not let it realize you can see it.",
+            "Anomalous facial features detected.",
+            "If cornered, follow the T.H.I.N.K. principle.",
+            "Victims are typically found <span class='redacted'>turned inside out</span>.",
+            "Radio interference spikes within 50 meters.",
+            "There is not enough room for the two of us."
+        ];
+
+        // Placeholder images
+        const imageUrls = [
+            "https://picsum.photos/seed/alternate1/600/400?grayscale",
+            "https://picsum.photos/seed/sirenhead/600/400?grayscale",
+            "https://picsum.photos/seed/intruder/600/400?grayscale",
+            "https://picsum.photos/seed/longhorse/600/400?grayscale",
+            "https://picsum.photos/seed/alternate2/600/400?grayscale"
+        ];
+
+        function getRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Generate 150 entries
+        const container = document.getElementById('entities-container');
+        let htmlContent = "";
+
+        for (let i = 1; i <= 150; i++) {
+            const subjectName = `SUBJECT ${i.toString().padStart(3, '0')}: ANOMALY CLASS ${String.fromCharCode(65 + (i % 26))}`;
+            
+            htmlContent += `
+                <div class="entity-card">
+                    <h2 class="entity-title">${subjectName}</h2>
+                    <img src="${getRandom(imageUrls)}" class="entity-image" alt="Entity Image Expunged">
+                    <div class="entity-description">
+                        <p><strong>ORIGIN:</strong> ${getRandom(origins)}</p>
+                        <p><strong>THREAT LEVEL:</strong> ${getRandom(threats)}</p>
+                        <p><strong>DESCRIPTION:</strong> ${getRandom(descFragments)} ${getRandom(descFragments)}</p>
+                        <p><strong>DIRECTIVE:</strong> If encountered, <span class="alert-text">RUN AND HIDE. DO NOT SPEAK.</span></p>
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = htmlContent;
+    </script>
+</body>
+</html>
