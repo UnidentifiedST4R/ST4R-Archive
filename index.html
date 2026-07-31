@@ -105,16 +105,15 @@
     <div id="loading-msg">> ESTABLISHING UPLINK...</div>
     <div id="grimoire-container"></div>
 
-    <!-- Firebase App (the core Firebase SDK) -->
+    <!-- Firebase App SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
     <!-- Firebase Realtime Database SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
 
     <script>
         // ==========================================
-        // 1. FIREBASE CONFIGURATION
+        // 1. FIREBASE CONFIGURATION (REPLACE WITH YOUR KEYS)
         // ==========================================
-        // Replace these values with your actual project config from the Firebase Console
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY_HERE",
             authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -130,10 +129,10 @@
         const database = firebase.database();
 
         // ==========================================
-        // 2. THE JAVASCRIPT RUNE GENERATOR
+        // 2. PROCEDURAL SVG RUNE GENERATOR
         // ==========================================
-        // Translates "U-R-D-L" strings into SVG pictures!
         function generateRuneSVG(sequence) {
+            if (!sequence) sequence = "U";
             const moves = sequence.split('-');
             let currentX = 50; 
             let currentY = 50;
@@ -154,46 +153,40 @@
         }
 
         // ==========================================
-        // 3. FETCH DATA AND RENDER
+        // 3. FETCH DATA & RENDER LIVE GRIMOIRE
         // ==========================================
         const container = document.getElementById('grimoire-container');
         const loadingMsg = document.getElementById('loading-msg');
         const elementsOrder = ['fire', 'water', 'earth', 'wind'];
 
-        // Listen for data from Firebase (Realtime updates!)
         database.ref('spellDatabase').on('value', (snapshot) => {
             const spellDB = snapshot.val();
             
             if (!spellDB) {
-                loadingMsg.innerHTML = "❌ ERR: SPELL_DATABASE NOT FOUND";
+                loadingMsg.innerHTML = "❌ ERR: SPELL_DATABASE NODE MISSING";
                 return;
             }
 
-            // Clear loading/previous content
             loadingMsg.style.display = 'none';
             container.innerHTML = '';
 
-            // Group spells by element
             const groupedSpells = { fire: [], water: [], earth: [], wind: [] };
             for (const name in spellDB) {
                 const spellData = spellDB[name];
-                spellData.name = name; // add name into the data object
+                spellData.name = name;
                 if (groupedSpells[spellData.element]) {
                     groupedSpells[spellData.element].push(spellData);
                 }
             }
 
-            // Render each elemental section
             elementsOrder.forEach(element => {
                 const spells = groupedSpells[element];
                 if (spells.length === 0) return;
 
-                // Sort by level
                 spells.sort((a, b) => a.level - b.level);
 
                 const section = document.createElement('div');
                 section.className = 'element-section';
-                
                 section.innerHTML = `<div class="element-title ${element}">// ${element.toUpperCase()} ENTITIES</div>`;
 
                 const grid = document.createElement('div');
@@ -206,7 +199,7 @@
                         <div class="spell-level">LVL ${spell.level}</div>
                         ${generateRuneSVG(spell.sequence)}
                         <div class="spell-name">${spell.name}</div>
-                        <div class="spell-sequence">[ ${spell.sequence} ]</div>
+                        <div class="spell-sequence">[ ${spell.sequence || 'U'} ]</div>
                     `;
                     grid.appendChild(card);
                 });
@@ -215,7 +208,7 @@
                 container.appendChild(section);
             });
             
-            container.innerHTML += `<div style="color:#333; text-align:center; margin-top:20px">>> DATA SYNC COMPLETE // END OF LOG</div>`;
+            container.innerHTML += `<div style="color:#444; text-align:center; margin-top:30px; letter-spacing:2px;">>> DATA SYNC ACTIVE // END OF LOG</div>`;
         });
     </script>
 </body>
